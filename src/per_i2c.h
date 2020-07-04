@@ -13,36 +13,28 @@ extern "C"
 {
 #endif
 
-//#include "stm32h7xx_hal.h"
 #include "daisy_core.h"
 
     /** @addtogroup serial
-    @{
+	@{
     */
 
+    /** Driver for controlling I2C devices.
+     * TODO: Add DMA support for I2C4
+     * TODO: Add support for receive transmissions.
+     */
 
-    /** Driver for controlling I2C devices */
-
-    /** Specifices the internal peripheral to use (these are mapped to different pins on the hardware).    */
+    /** Specifices the internal peripheral to use (these are mapped to different pins on the hardware). */
     typedef enum
     {
-        DSY_I2C_PERIPH_1, /**< & */
-        DSY_I2C_PERIPH_2, /**< & */
-        DSY_I2C_PERIPH_3, /**< & */
-        DSY_I2C_PERIPH_4, /**< & */
+        DSY_I2C_PERIPH_1 = 0, /**< & */
+        DSY_I2C_PERIPH_2,     /**< & */
+        DSY_I2C_PERIPH_3,     /**< & */
+        DSY_I2C_PERIPH_4,     /**< & */
     } dsy_i2c_periph;
 
-    /** List of pins associated with the peripheral. These must be set in the handle's pin_config. */
-    typedef enum
-    {
-        DSY_I2C_PIN_SCL,  /**< & */
-        DSY_I2C_PIN_SDA,  /**< & */
-        DSY_I2C_PIN_LAST, /**< & */
-    } dsy_i2c_pin;
-
-    /** 
-    Rate at which the clock/data will be sent/received. The device being used will have maximum speeds.
-    1MHZ Mode is currently 886kHz**
+    /** Rate at which the clock/data will be sent/received. The device being used will have maximum speeds.
+     *  1MHZ Mode is currently 886kHz**
      */
     typedef enum
     {
@@ -52,19 +44,83 @@ extern "C"
         DSY_I2C_SPEED_LAST,   /**< & */
     } dsy_i2c_speed;
 
-    /** this object will be used to initialize the I2C interface, and can be passed to dev_ drivers that require I2C. */
+    /** Contains settings for initialising an I2C interface, and can be passed to dev_ drivers that require I2C. */
     typedef struct
     {
-        dsy_i2c_periph periph;                       /**< & */
-        dsy_gpio_pin   pin_config[DSY_I2C_PIN_LAST]; /**< & */
-        dsy_i2c_speed  speed;                        /**< & */
+        dsy_i2c_periph periph; /**< & */
+        struct
+        {
+            dsy_gpio_pin scl; /**< & */
+            dsy_gpio_pin sda; /**< & */
+        } pin_config;         /**< & */
+        dsy_i2c_speed speed;  /**< & */
+    } dsy_i2c_config;
+
+    /** Return values for I2C functions. */
+    typedef enum
+    {
+        DSY_I2C_RES_OK,  /**< & */
+        DSY_I2C_RES_ERR, /**< & */
+    } dsy_i2c_result;
+
+    /** A handle used to refer to an I2C peripheral. */
+    typedef struct
+    {
+        dsy_i2c_config config;
+        void*          hal_hi2c;
     } dsy_i2c_handle;
 
-    /** 
-    Initializes an I2C peripheral with the data given from the handle. 
-    \param *dsy_hi2c Required to initialize.
-    */
-    void dsy_i2c_init(dsy_i2c_handle *dsy_hi2c);
+    /** Initializes an I2C peripheral with the data given from the config. */
+    dsy_i2c_result dsy_i2c_init(dsy_i2c_handle* dsy_hi2c);
+
+    /** Transmits data and blocks until the transmission is complete.
+     *  Use this for smaller transmissions of a few bytes.
+     * 
+     *  \param dsy_hi2c     The I2C peripheral to use.
+     *  \param address      The slave device address.
+     *  \param data         A pointer to the data to be sent.
+     *  \param size         The size of the data to be sent, in bytes.
+     *  \param timeout      A timeout.
+     */
+    dsy_i2c_result dsy_i2c_transmit_blocking(dsy_i2c_handle* dsy_hi2c,
+                                             uint16_t        address,
+                                             uint8_t*        data,
+                                             uint16_t        size,
+                                             uint32_t        timeout);
+
+    /** A callback to be executed when a dma transfer is complete. */
+    typedef void (*dsy_i2c_transf_cplt_callback_t)(void*          context,
+                                                   dsy_i2c_result result);
+
+    /** Transmits data with a DMA and returns immediately. Use this for larger transmissions.
+     *  The pointer to data must be located in the D2 memory domain by adding the 
+     *  `DMA_BUFFER_MEM_SECTION` attribute like this:
+     *      uint8_t DMA_BUFFER_MEM_SECTION my_buffer[100];
+     *  If that is not possible for some reason, you MUST clear the cachelines spanning the size of 
+     *  the buffer, before initiating the dma transfer by calling 
+     *  `dsy_dma_clear_cache_for_buffer(buffer, size);`
+     * 
+     *  A single DMA is shared across I2C, I2C2 and I2C3. I2C4 has no DMA support (yet).
+     *  If the DMA is busy with another transfer, the job will be queued and executed later.
+     *  If there is a job waiting to be executed for this I2C peripheral, this function
+     *  will block until the queue is free and the job can be queued.
+     * 
+     *  \param dsy_hi2c     The I2C peripheral to use.
+     *  \param address      The slave device address.
+     *  \param data         A pointer to the data to be sent.
+     *  \param size         The size of the data to be sent, in bytes.
+     *  \param callback     A callback to execute when the transfer finishes, or NULL.
+     *  \param callback_context A pointer that will be passed back to you in the callback.      
+     */
+    dsy_i2c_result dsy_i2c_transmit_dma(dsy_i2c_handle*                dsy_hi2c,
+                                        uint16_t                       address,
+                                        uint8_t*                       data,
+                                        uint16_t                       size,
+                                        dsy_i2c_transf_cplt_callback_t callback,
+                                        void* callback_context);
+
+    /** Returns DSY_I2C_RES_OK if the peripheral is ready to transfer data. */
+    dsy_i2c_result dsy_i2c_ready(dsy_i2c_handle* dsy_hi2c);
 
 #ifdef __cplusplus
 }

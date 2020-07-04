@@ -62,7 +62,7 @@ uint16_t dsy_hal_map_get_pin(const dsy_gpio_pin* p)
 
 // I2C FUNCTIONS
 
-I2C_HandleTypeDef* dsy_hal_map_get_i2c(const dsy_i2c_handle* p)
+I2C_HandleTypeDef* dsy_hal_map_get_i2c(const dsy_i2c_config* p)
 {
     I2C_HandleTypeDef* ptr[4] = {&hi2c1, &hi2c2, &hi2c3, &hi2c4};
     return ptr[p->periph];

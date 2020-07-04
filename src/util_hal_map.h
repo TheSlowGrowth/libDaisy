@@ -34,10 +34,10 @@ GPIO_TypeDef *dsy_hal_map_get_port(const dsy_gpio_pin *p);
 uint16_t dsy_hal_map_get_pin(const dsy_gpio_pin *p);
 
 
-/** \param  *p dsy_i2c_handle to get
+/** \param  *p dsy_i2c_config to get
     \return The I2C_HandleTypeDef for the given *p
 */
-I2C_HandleTypeDef *dsy_hal_map_get_i2c(const dsy_i2c_handle *p);
+I2C_HandleTypeDef *dsy_hal_map_get_i2c(const dsy_i2c_config *p);
 
 #endif
 /** @} */
