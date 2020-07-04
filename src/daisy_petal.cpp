@@ -30,8 +30,10 @@ using namespace daisy;
 #define PIN_KNOB_5 18
 #define PIN_KNOB_6 21
 
-// Extra Peripherals
-#define LED_DRIVER_I2C i2c1_handle
+static constexpr dsy_i2c_config petal_led_i2c_config
+    = {DSY_I2C_PERIPH_1,
+       {{DSY_GPIOB, 8}, {DSY_GPIOB, 9}},
+       DSY_I2C_SPEED_100KHZ};
 
 enum LedOrder
 {
@@ -70,6 +72,9 @@ enum LedOrder
     LED_LAST,
 };
 
+static LedDriverPca9685<2, true>::DmaBuffer DMA_BUFFER_MEM_SECTION
+    petal_led_dma_buffer_a,
+    petal_led_dma_buffer_b;
 
 void DaisyPetal::Init()
 {
@@ -187,8 +192,7 @@ void DaisyPetal::UpdateLeds()
     // TODO:
     // Get the LED values into the LED Driver...
     // Still have to call this once per driver -- need to update.
-    dsy_led_driver_update();
-    dsy_led_driver_update();
+    led_driver_.swapBuffersAndTransmit();
 }
 
 void DaisyPetal::SetRingLed(RingLed idx, float r, float g, float b)
@@ -218,15 +222,16 @@ void DaisyPetal::SetRingLed(RingLed idx, float r, float g, float b)
                                      LED_RING_7_B,
                                      LED_RING_8_B};
 
-    dsy_led_driver_set_led(r_addr[idx], cube(r));
-    dsy_led_driver_set_led(g_addr[idx], cube(g));
-    dsy_led_driver_set_led(b_addr[idx], cube(b));
+
+    led_driver_.setLed(r_addr[idx], r);
+    led_driver_.setLed(g_addr[idx], g);
+    led_driver_.setLed(b_addr[idx], b);
 }
 void DaisyPetal::SetFootswitchLed(FootswitchLed idx, float bright)
 {
     uint8_t fs_addr[FOOTSWITCH_LED_LAST]
         = {LED_FS_1, LED_FS_2, LED_FS_3, LED_FS_4};
-    dsy_led_driver_set_led(fs_addr[idx], cube(bright));
+    led_driver_.setLed(fs_addr[idx], bright);
 }
 
 void DaisyPetal::InitSwitches()
@@ -269,10 +274,14 @@ void DaisyPetal::InitLeds()
 
     // Need to figure out how we want to handle that.
     uint8_t addr[2] = {0x00, 0x01};
-    dsy_led_driver_init(&seed.LED_DRIVER_I2C, addr, 2);
+    led_driver_.Init(petal_led_i2c_config,
+                     addr,
+                     petal_led_dma_buffer_a,
+                     petal_led_dma_buffer_b);
     ClearLeds();
     UpdateLeds();
 }
+
 void DaisyPetal::InitAnalogControls()
 {
     // Set order of ADCs based on CHANNEL NUMBER
