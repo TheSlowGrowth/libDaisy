@@ -124,7 +124,7 @@ uint8_t             codec_wm8731_init(dsy_i2c_handle *hi2c,
 {
     codec_handle.sample_rate   = sample_rate;
     codec_handle.mcu_is_master = mcu_is_master;
-    codec_handle.i2c           = dsy_hal_map_get_i2c(hi2c);
+    codec_handle.i2c           = dsy_hal_map_get_i2c(&hi2c->config);
     codec_handle.bitdepth      = bitdepth;
 
     uint8_t s;
@@ -140,7 +140,7 @@ uint8_t codec_wm8731_enter_bypass(dsy_i2c_handle *hi2c)
 {
     uint8_t s;
     uint8_t bypass_mode_byte = 0;
-    codec_handle.i2c         = dsy_hal_map_get_i2c(hi2c);
+    codec_handle.i2c         = dsy_hal_map_get_i2c(&hi2c->config);
     bypass_mode_byte |= CODEC_ANALOG_BYPASS | CODEC_ANALOG_MUTEMIC;
     s = codec_write_control_register(CODEC_REG_ANALOGUE_ROUTING,
                                      bypass_mode_byte);
@@ -151,7 +151,7 @@ uint8_t codec_wm8731_exit_bypass(dsy_i2c_handle *hi2c)
 {
     uint8_t s;
     uint8_t byte     = 0;
-    codec_handle.i2c = dsy_hal_map_get_i2c(hi2c);
+    codec_handle.i2c = dsy_hal_map_get_i2c(&hi2c->config);
     byte |= CODEC_ANALOG_MUTEMIC | CODEC_ANALOG_DACSEL;
     s = codec_write_control_register(CODEC_REG_ANALOGUE_ROUTING, byte);
     s = s && codec_write_control_register(CODEC_REG_ACTIVE, 0x00);

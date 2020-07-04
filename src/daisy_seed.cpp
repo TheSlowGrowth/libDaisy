@@ -242,22 +242,19 @@ void DaisySeed::ConfigureDac()
 }
 void DaisySeed::ConfigureI2c()
 {
-    dsy_gpio_pin *pin_group;
     // TODO: Add Config for I2C3 and I2C4
     // I2C 1 - (On daisy patch this controls the LED Driver, and the WM8731).
-    i2c1_handle.periph              = DSY_I2C_PERIPH_1;
-    i2c1_handle.speed               = DSY_I2C_SPEED_400KHZ;
-    pin_group                       = i2c1_handle.pin_config;
-    pin_group[DSY_I2C_PIN_SCL].port = DSY_GPIOB;
-    pin_group[DSY_I2C_PIN_SCL].pin  = 8;
-    pin_group[DSY_I2C_PIN_SDA].port = DSY_GPIOB;
-    pin_group[DSY_I2C_PIN_SDA].pin  = 9;
+    i2c1_handle.config.periph              = DSY_I2C_PERIPH_1;
+    i2c1_handle.config.speed               = DSY_I2C_SPEED_400KHZ;
+    i2c1_handle.config.pin_config.scl.port = DSY_GPIOB;
+    i2c1_handle.config.pin_config.scl.pin  = 8;
+    i2c1_handle.config.pin_config.sda.port = DSY_GPIOB;
+    i2c1_handle.config.pin_config.sda.pin  = 9;
     // I2C 2 - (On daisy patch this controls the on-board WM8731)
-    i2c2_handle.periph              = DSY_I2C_PERIPH_2;
-    i2c2_handle.speed               = DSY_I2C_SPEED_400KHZ;
-    pin_group                       = i2c2_handle.pin_config;
-    pin_group[DSY_I2C_PIN_SCL].port = DSY_GPIOH;
-    pin_group[DSY_I2C_PIN_SCL].pin  = 4;
-    pin_group[DSY_I2C_PIN_SDA].port = DSY_GPIOB;
-    pin_group[DSY_I2C_PIN_SDA].pin  = 11;
+    i2c2_handle.config.periph              = DSY_I2C_PERIPH_2;
+    i2c2_handle.config.speed               = DSY_I2C_SPEED_400KHZ;
+    i2c2_handle.config.pin_config.scl.port = DSY_GPIOH;
+    i2c2_handle.config.pin_config.scl.pin  = 4;
+    i2c2_handle.config.pin_config.sda.port = DSY_GPIOB;
+    i2c2_handle.config.pin_config.sda.pin  = 11;
 }
