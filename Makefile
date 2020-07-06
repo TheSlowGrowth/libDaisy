@@ -37,6 +37,7 @@ hid_usb \
 hid_wavplayer \
 dev_sr_4021 \
 dev_sr_595 \
+ui/UI \
 util_bsp_sd_diskio \
 util_hal_map \
 util_oled_fonts \
