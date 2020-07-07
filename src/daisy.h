@@ -85,6 +85,7 @@ FORCE_INLINE int32_t f2s24(float x)
 #include "hid/rgb_led.h"
 #include "dev/sr_595.h"
 #include "util/scopedirqblocker.h"
+#include "ui/UiEventQueue.h"
 #endif
 #endif
 
