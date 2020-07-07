@@ -86,6 +86,7 @@ FORCE_INLINE int32_t f2s24(float x)
 #include "dev/sr_595.h"
 #include "util/scopedirqblocker.h"
 #include "ui/UiEventQueue.h"
+#include "ui/ButtonMonitor.h"
 #endif
 #endif
 
