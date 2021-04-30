@@ -51,6 +51,7 @@ per/i2c \
 per/spi \
 per/tim \
 per/uart \
+ui/UI \
 util/color \
 util/MappedValue \
 util/WaveTableLoader \
