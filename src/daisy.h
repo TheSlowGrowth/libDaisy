@@ -44,6 +44,7 @@
 #include "dev/codec_wm8731.h"
 #include "dev/lcd_hd44780.h"
 #include "util/scopedirqblocker.h"
+#include "util/FIFO.h"
 #include "util/FixedCapStr.h"
 #include "util/MappedValue.h"
 #include "util/WaveTableLoader.h"
