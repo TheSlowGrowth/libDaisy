@@ -24,6 +24,12 @@ class OneBitGraphicsDisplay
     virtual uint16_t Height() const = 0;
     virtual uint16_t Width() const  = 0;
 
+    Rectangle GetBounds() const
+    {
+        return Rectangle(int16_t(Width()), int16_t(Height()));
+    }
+
+
     size_t CurrentX() { return currentX_; };
     size_t CurrentY() { return currentY_; };
 
