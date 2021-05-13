@@ -1,3 +1,4 @@
+#ifndef UNIT_TEST // for unit tests, a dummy implementation is provided below
 #include <stm32h7xx_hal.h>
 #include "sys/system.h"
 #include "sys/dma.h"
@@ -555,3 +556,10 @@ static void Error_Handler()
 //
 //    HAL_MPU_Enable(MPU_PRIVILEGED_DEFAULT);
 //}
+#else // ifndef UNIT_TEST
+
+#include "system.h"
+// this is part of the dummy version used in unit tests
+TestStateIsolator<daisy::System::SystemState> daisy::System::stateIsolator_;
+
+#endif

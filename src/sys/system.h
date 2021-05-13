@@ -1,6 +1,8 @@
 #ifndef DSY_SYSTEM_H
 #define DSY_SYSTEM_H
 
+#ifndef UNIT_TEST // for unit tests, a dummy implementation is provided below
+
 #include <cstdint>
 #include "per/tim.h"
 
@@ -145,7 +147,61 @@ class System
      ** Maybe this whole class should be static.. */
     static TimerHandle tim_;
 };
+} // namespace daisy
+
+#else // ifndef UNIT_TEST
+
+#include <cstdint>
+#include "../tests/TestStateIsolator.h"
+namespace daisy
+{
+/** This is a dummy implementation for use in unit tests.
+ *  In your test, you can set the current system time to
+ *  control the "flow of time" :-)
+ *  Only the time-related functions are added here. If
+ *  your tests need some of the other functions, feel
+ *  free to add them here as well.
+ * 
+ *  To decouple tests that are running in parallel, each
+ *  test can independently modify the current time.
+ */
+class System
+{
+  public:
+    static uint32_t GetNow()
+    {
+        return stateIsolator_.GetStateForCurrentTest().currentUs_ / 1000;
+    }
+    static uint32_t GetUs()
+    {
+        return stateIsolator_.GetStateForCurrentTest().currentUs_;
+    }
+    static uint32_t GetTick()
+    {
+        return stateIsolator_.GetStateForCurrentTest().currentTick_;
+    }
+
+    /** Sets the current "tick" value for the test that's currently running. */
+    void SetTickForUnitTest(uint32_t tick)
+    {
+        stateIsolator_.GetStateForCurrentTest().currentTick_ = tick;
+    }
+    /** Sets the current microsecond value for the test that's currently running. */
+    void SetUsForUnitTest(uint32_t us)
+    {
+        stateIsolator_.GetStateForCurrentTest().currentUs_ = us;
+    }
+
+  private:
+    struct SystemState
+    {
+        uint32_t currentTick_ = 0;
+        uint32_t currentUs_   = 0;
+    };
+    static TestStateIsolator<SystemState> stateIsolator_;
+};
 
 } // namespace daisy
 
+#endif // ifndef UNIT_TEST
 #endif
