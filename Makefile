@@ -52,6 +52,7 @@ per/spi \
 per/tim \
 per/uart \
 ui/UI \
+ui/AbstractMenu \
 util/color \
 util/MappedValue \
 util/WaveTableLoader \

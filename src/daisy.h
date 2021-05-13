@@ -48,6 +48,7 @@
 #include "ui/PotMonitor.h"
 #include "ui/UI.h"
 #include "ui/UiEventQueue.h"
+#include "ui/AbstractMenu.h"
 #include "util/scopedirqblocker.h"
 #include "util/FIFO.h"
 #include "util/FixedCapStr.h"
