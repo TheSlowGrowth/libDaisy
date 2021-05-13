@@ -3,6 +3,7 @@
 #include "daisy_core.h"
 #include "graphics_common.h"
 #include "display.h"
+#include "ui/MenuPage.h"
 
 #ifndef deg2rad
 #define deg2rad(deg) ((deg)*3.141592 / 180.0)
@@ -14,6 +15,7 @@ namespace daisy
  *  member functions and assign them to a UI object to create custom looking UIs.
  */
 class OneBitGraphicsLookAndFeel
+: public MenuPageLaF::OneBitGraphicsLookAndFeelFunctions
 {
   public:
     virtual ~OneBitGraphicsLookAndFeel() {}
