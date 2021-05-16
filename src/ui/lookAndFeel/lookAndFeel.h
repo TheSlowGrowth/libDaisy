@@ -1,7 +1,8 @@
 #pragma once
 #include <cmath>
-#include "graphics_common.h"
-#include "display.h"
+#include "hid/disp/graphics_common.h"
+#include "hid/disp/display.h"
+#include "FullScreenItemMenuLookAndFeelMethods.h"
 
 namespace daisy
 {
@@ -12,6 +13,7 @@ namespace daisy
  *  as needed. Then assign an object of your new class to a UI or to individual UiPages.
  */
 class OneBitGraphicsLookAndFeel
+: public FullScreenItemMenuLookAndFeelMethods
 {
   public:
     virtual ~OneBitGraphicsLookAndFeel() {}
