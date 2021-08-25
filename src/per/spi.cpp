@@ -26,6 +26,10 @@ class SpiHandle::Impl
 
     Result BlockingTransmit(uint8_t* buff, size_t size, uint32_t timeout);
     Result BlockingReceive(uint8_t* buffer, uint16_t size, uint32_t timeout);
+    Result BlockingTransfer(uint8_t* buffer_tx,
+                            uint8_t* buffer_rx,
+                            uint16_t size,
+                            uint32_t timeout);
 
     Result InitPins();
     Result DeInitPins();
@@ -221,6 +225,18 @@ SpiHandle::Result SpiHandle::Impl::BlockingReceive(uint8_t* buffer,
                                                    uint32_t timeout)
 {
     if(HAL_SPI_Receive(&hspi_, buffer, size, timeout) != HAL_OK)
+    {
+        return Result::ERR;
+    }
+    return Result::OK;
+}
+
+SpiHandle::Result SpiHandle::Impl::BlockingTransfer(uint8_t* buffer_tx,
+                                                    uint8_t* buffer_rx,
+                                                    uint16_t size,
+                                                    uint32_t timeout)
+{
+    if(HAL_SPI_TransmitReceive(&hspi_, buffer_tx, buffer_rx, size, timeout))
     {
         return Result::ERR;
     }
@@ -592,4 +608,12 @@ SpiHandle::Result
 SpiHandle::BlockingReceive(uint8_t* buffer, uint16_t size, uint32_t timeout)
 {
     return pimpl_->BlockingReceive(buffer, size, timeout);
+}
+
+SpiHandle::Result SpiHandle::BlockingTransfer(uint8_t* buffer_tx,
+                                              uint8_t* buffer_rx,
+                                              uint16_t size,
+                                              uint32_t timeout)
+{
+    return pimpl_->BlockingTransfer(buffer_tx, buffer_rx, size, timeout);
 }

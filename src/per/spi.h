@@ -114,18 +114,27 @@ class SpiHandle
     const Config& GetConfig() const;
 
     /** Blocking transmit 
-    \param *buff input buffer
+    \param buffer input buffer
     \param size  buffer size
     */
     Result BlockingTransmit(uint8_t* buff, size_t size, uint32_t timeout = 100);
 
     /** Polling Receive
-    \param *buff input buffer
+    \param buffer input buffer
     \param size  buffer size
     \param timeout How long to timeout for
     \return Whether the receive was successful or not
     */
     Result BlockingReceive(uint8_t* buffer, uint16_t size, uint32_t timeout);
+
+    /** Polling Transmit and Receive
+    \param buffer_tx output buffer
+    \param buffer_rx input buffer
+    \param size  buffer size
+    \param timeout How long to timeout for
+    \return Whether the transmission was successful or not
+    */
+    Result BlockingTransfer(uint8_t* buffer_tx, uint8_t* buffer_rx, uint16_t size, uint32_t timeout);
 
     /** \return the result of HAL_SPI_GetError() to the user. */
     int CheckError();
