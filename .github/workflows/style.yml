@@ -37,3 +37,15 @@ jobs:
         extensions: 'h,cpp'
         clangFormatVersion: 10
 
+  clang-tidy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run clang-tidy
+      uses: HorstBaerbel/action-clang-tidy@1.2
+      with:
+        scandir: './src'
+        builddir: 'build'
+        excludedirs: ''
+        extensions: 'c,h,C,H,cpp,hpp,cc,hh,c++,h++,cxx,hxx'
+
