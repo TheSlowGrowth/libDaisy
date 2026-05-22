@@ -83,6 +83,11 @@ class SdmmcHandler
      */
     Result Init(const Config& cfg);
 
+    /** Deinitializes the SD peripheral and performs a hardware reset of the
+      * SDMMC block. Call this before re-Init() for hot-plug support.
+      */
+    void DeInit();
+
   private:
 };
 /** @} */

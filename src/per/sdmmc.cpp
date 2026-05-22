@@ -27,6 +27,13 @@ SdmmcHandler::Result SdmmcHandler::Init(const Config& cfg)
     return Result::OK;
 }
 
+void SdmmcHandler::DeInit()
+{
+    HAL_SD_DeInit(&hsd1);
+    __HAL_RCC_SDMMC1_FORCE_RESET();
+    __HAL_RCC_SDMMC1_RELEASE_RESET();
+}
+
 
 // HAL MSP Functions
 
